@@ -4,5 +4,5 @@ class Renderer
 {
 public:
 
-    void DrawRoad();
+    static void DrawRoad();
 };

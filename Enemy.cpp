@@ -1,16 +1,19 @@
 #include "Enemy.h"
 
+#include "Projection.h"
+
 #include <graphics.h>
+
+// 敌人图片
+IMAGE enemyImg;
+
+bool enemyLoaded = false;
 
 void Enemy::Update()
 {
-    // 向玩家推进
+    z -= speed;
 
-    z -= 2;
-
-    // 到达底部
-
-    if (z < 0)
+    if (z < 30)
     {
         alive = false;
     }
@@ -18,40 +21,54 @@ void Enemy::Update()
 
 void Enemy::Draw()
 {
-    const int screenW = 900;
-    const int screenH = 900;
+    // =========================
+    // 第一次加载图片
+    // =========================
 
-    // 透视缩放
-
-    float scale =
-        1.0f - z / 1000.0f;
-
-    if (scale < 0.1f)
+    if (!enemyLoaded)
     {
-        scale = 0.1f;
+        loadimage(
+            &enemyImg,
+            L"Enemy.png",
+            128,
+            128,
+            true
+        );
+
+        enemyLoaded = true;
     }
 
-    // 透视位置
+    // =========================
+    // 透视投影
+    // =========================
 
-    int screenX =
-        screenW / 2 + (int)(x * scale);
+    ProjectionResult p =
+        Projection::Project(x, z);
 
-    int screenY =
-        screenH - 180 - (int)z;
-
-    // 敌人大小
+    // =========================
+    // 大小缩放
+    // =========================
 
     int size =
-        (int)(50 * scale);
+        (int)(90 * p.scale);
 
-    // 敌人颜色
+    if (size < 18)
+    {
+        size = 18;
+    }
 
-    setfillcolor(RED);
+    // =========================
+    // 直接绘制PNG
+    // =========================
 
-    solidrectangle(
-        screenX - size,
-        screenY - size,
-        screenX + size,
-        screenY + size
+// =========================
+// 绘制敌人
+// =========================
+
+    putimage(
+        p.screenX - 64,
+        p.screenY - 64,
+        &enemyImg
     );
+    
 }

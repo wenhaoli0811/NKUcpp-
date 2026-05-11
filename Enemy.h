@@ -14,7 +14,9 @@ public:
 
     float z = 1000;
 
-    bool alive = true;
+    float speed = 8;
 
-    int hp = 3;
+    int hp = 1;
+
+    bool alive = true;
 };

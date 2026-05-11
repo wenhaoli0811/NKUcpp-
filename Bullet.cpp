@@ -1,14 +1,18 @@
 #include "Bullet.h"
 
+#include "Projection.h"
+
 #include <graphics.h>
+#include <easyx.h>
+
+// 子弹贴图
+IMAGE bulletImg;
+
+bool bulletImgLoaded = false;
 
 void Bullet::Update()
 {
-    // 子弹向远方飞
-
-    z += 20;
-
-    // 飞太远删除
+    z += 25;
 
     if (z > 1000)
     {
@@ -18,39 +22,37 @@ void Bullet::Update()
 
 void Bullet::Draw()
 {
-    const int screenW = 900;
-    const int screenH = 900;
-
-    // 透视比例
-
-    float scale =
-        1.0f - z / 1000.0f;
-
-    if (scale < 0.1f)
-    {
-        scale = 0.1f;
-    }
-
-    // 越远越靠中间
-
-    int screenX =
-        screenW / 2 + (int)(x * scale);
-
-    // 越远越靠上
-
-    int screenY =
-        screenH - 180 - (int)z;
-
-    // 子弹大小
+    ProjectionResult p =
+        Projection::Project(x, z);
 
     int size =
-        (int)(12 * scale);
+        (int)(22 * p.scale);
 
-    setfillcolor(YELLOW);
+    if (size < 6)
+    {
+        size = 6;
+    }
 
-    solidcircle(
-        screenX,
-        screenY,
-        size
+    // 加载PNG
+
+    if (!bulletImgLoaded)
+    {
+        loadimage(
+            &bulletImg,
+            L"Bullet.png",
+            32,
+            32,
+            true
+        );
+
+        bulletImgLoaded = true;
+    }
+
+    // 绘制PNG
+
+    putimage(
+        p.screenX - 16,
+        p.screenY - 16,
+        &bulletImg
     );
 }
