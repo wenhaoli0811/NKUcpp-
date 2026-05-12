@@ -4,6 +4,9 @@
 
 #include <graphics.h>
 #include <easyx.h>
+#include <windows.h>
+
+#pragma comment(lib, "Msimg32.lib")
 
 // 子弹贴图
 IMAGE bulletImg;
@@ -26,7 +29,7 @@ void Bullet::Draw()
         Projection::Project(x, z);
 
     int size =
-        (int)(22 * p.scale);
+        (int)(80 * p.scale);
 
     if (size < 6)
     {
@@ -48,11 +51,29 @@ void Bullet::Draw()
         bulletImgLoaded = true;
     }
 
-    // 绘制PNG
+    // PNG透明绘制
 
-    putimage(
-        p.screenX - 16,
-        p.screenY - 16,
-        &bulletImg
+    BLENDFUNCTION blend =
+    {
+        AC_SRC_OVER,
+        0,
+        255,
+        AC_SRC_ALPHA
+    };
+
+    AlphaBlend(
+        GetImageHDC(NULL),
+        p.screenX - size / 2,
+        p.screenY - size / 2,
+        size,
+        size,
+
+        GetImageHDC(&bulletImg),
+        0,
+        0,
+        32,
+        32,
+
+        blend
     );
 }

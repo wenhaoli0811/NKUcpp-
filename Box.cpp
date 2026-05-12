@@ -5,6 +5,9 @@
 #include <graphics.h>
 #include <easyx.h>
 
+#include <windows.h>
+#pragma comment(lib, "Msimg32.lib")
+
 // 宝箱贴图
 IMAGE boxImg;
 
@@ -26,7 +29,7 @@ void Box::Draw()
         Projection::Project(x, z);
 
     int size =
-        (int)(90 * p.scale);
+        (int)(200 * p.scale);
 
     if (size < 24)
     {
@@ -34,7 +37,6 @@ void Box::Draw()
     }
 
     // 加载PNG
-
     if (!boxImgLoaded)
     {
         loadimage(
@@ -48,11 +50,27 @@ void Box::Draw()
         boxImgLoaded = true;
     }
 
-    // 绘制PNG
+    // PNG透明绘制
+    BLENDFUNCTION blend = {
+        AC_SRC_OVER,
+        0,
+        255,
+        AC_SRC_ALPHA
+    };
 
-    putimage(
-        p.screenX - 64,
-        p.screenY - 64,
-        &boxImg
+    AlphaBlend(
+        GetImageHDC(NULL),      // 目标
+        p.screenX - size / 2,
+        p.screenY - size / 2,
+        size,
+        size,
+
+        GetImageHDC(&boxImg),   // 源
+        0,
+        0,
+        128,
+        128,
+
+        blend
     );
 }

@@ -3,6 +3,9 @@
 #include "Projection.h"
 
 #include <graphics.h>
+#include <windows.h>
+
+#pragma comment(lib, "Msimg32.lib")
 
 // 敌人图片
 IMAGE enemyImg;
@@ -50,7 +53,7 @@ void Enemy::Draw()
     // =========================
 
     int size =
-        (int)(90 * p.scale);
+        (int)(240 * p.scale);
 
     if (size < 18)
     {
@@ -58,17 +61,43 @@ void Enemy::Draw()
     }
 
     // =========================
-    // 直接绘制PNG
+    // 地面阴影
     // =========================
 
-// =========================
-// 绘制敌人
-// =========================
+    setfillcolor(RGB(30, 30, 30));
 
-    putimage(
-        p.screenX - 64,
-        p.screenY - 64,
-        &enemyImg
+    solidellipse(
+        p.screenX - size / 3,
+        p.screenY + size / 3,
+        p.screenX + size / 3,
+        p.screenY + size / 2
     );
-    
+
+    // =========================
+    // PNG透明绘制
+    // =========================
+
+    BLENDFUNCTION blend =
+    {
+        AC_SRC_OVER,
+        0,
+        255,
+        AC_SRC_ALPHA
+    };
+
+    AlphaBlend(
+        GetImageHDC(NULL),
+        p.screenX - size / 2,
+        p.screenY - size / 2,
+        size,
+        size,
+
+        GetImageHDC(&enemyImg),
+        0,
+        0,
+        128,
+        128,
+
+        blend
+    );
 }
